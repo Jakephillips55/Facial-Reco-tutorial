@@ -31,5 +31,7 @@ video.addEventListener('play', () => {
           displaySize)
           canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
         faceapi.draw.drawDetections(canvas, reformattedDetections)
+        faceapi.draw.drawFaceLandmarks(canvas, reformattedDetections)
+        faceapi.draw.drawFaceExpressions(canvas, reformattedDetections)
     }, 100)
 })
