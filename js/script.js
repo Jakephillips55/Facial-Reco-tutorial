@@ -5,6 +5,7 @@ Promise.all([
   faceapi.nets.faceLandmark68Net.loadFromUri('models'),
   faceapi.nets.faceRecognitionNet.loadFromUri('models'),
   faceapi.nets.faceExpressionNet.loadFromUri('models'),
+  faceapi.nets.ageGenderNet.loadFromUri('models'),
 ]).then(startVideo)
 
 function startVideo() {
@@ -24,7 +25,7 @@ video.addEventListener('play', () => {
 
     setInterval(async () => { 
       const detections = await faceapi.detectAllFaces(video,
-        new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions()
+        new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions().withAgeAndGender()
       
         console.log(detections)
         const reformattedDetections = faceapi.resizeResults(detections, 
@@ -33,5 +34,10 @@ video.addEventListener('play', () => {
         faceapi.draw.drawDetections(canvas, reformattedDetections)
         faceapi.draw.drawFaceLandmarks(canvas, reformattedDetections)
         faceapi.draw.drawFaceExpressions(canvas, reformattedDetections)
+        reformattedDetections.forEach( detection => {
+          const box = detection.detection.box
+          const drawBox = new faceapi.draw.DrawBox(box, { label: Math.round(detection.age) + " year old " + detection.gender })
+          drawBox.draw(canvas)
+        })
     }, 100)
 })
